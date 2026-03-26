@@ -1,7 +1,7 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Bell, Search, Settings, User, LogOut, ChevronDown } from 'lucide-react'
+import { Bell, Search, Settings, User, LogOut, ChevronDown, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -31,13 +31,23 @@ const notifications = [
   { id: 4, text: 'Order #ORD-008 delivered', time: '3 hr ago', unread: false },
 ]
 
-export default function Topbar() {
+export default function Topbar({ onMobileMenuToggle }) {
   const location = useLocation()
   const meta = routeMeta[location.pathname] || routeMeta['/dashboard']
   const unreadCount = notifications.filter(n => n.unread).length
 
   return (
-    <header className="h-16 bg-card border-b border-border flex items-center px-6 gap-4 flex-shrink-0">
+    <header className="h-16 bg-card border-b border-border flex items-center px-4 sm:px-6 gap-3 sm:gap-4 flex-shrink-0">
+      {/* Mobile hamburger */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="h-8 w-8 lg:hidden flex-shrink-0"
+        onClick={onMobileMenuToggle}
+      >
+        <Menu className="h-5 w-5 text-muted-foreground" />
+      </Button>
+
       <div className="flex-1 min-w-0">
         <motion.h1
           key={meta.title}
