@@ -1,12 +1,10 @@
 import React from 'react'
-import { motion } from 'framer-motion'
 import { ShoppingBag, DollarSign, Users, Truck, Eye, ArrowUpRight } from 'lucide-react'
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartTooltip,
   ResponsiveContainer, PieChart, Pie, Cell, Legend
 } from 'recharts'
 import StatsCard from '@/components/shared/StatsCard'
-import { staggerContainer, staggerItem, scaleIn } from '@/components/shared/PageTransition'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ordersData, ordersChartData, categoryChartData } from '@/data/mockData'
@@ -50,35 +48,27 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       {/* Stats Row */}
-      <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <motion.div variants={staggerItem}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="animate-fade-up" style={{ animationDelay: '0ms' }}>
           <StatsCard label="Total Orders" value="1,284" icon={ShoppingBag} trend="+12%" trendDirection="up" />
-        </motion.div>
-        <motion.div variants={staggerItem}>
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: '60ms' }}>
           <StatsCard label="Revenue" value="$48,350" icon={DollarSign} trend="+8.4%" trendDirection="up" />
-        </motion.div>
-        <motion.div variants={staggerItem}>
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: '120ms' }}>
           <StatsCard label="Active Users" value="3,920" icon={Users} trend="+5.1%" trendDirection="up" />
-        </motion.div>
-        <motion.div variants={staggerItem}>
+        </div>
+        <div className="animate-fade-up" style={{ animationDelay: '180ms' }}>
           <StatsCard label="Pending Deliveries" value="67" icon={Truck} trend="-3 today" trendDirection="down" />
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
         {/* Area Chart */}
-        <motion.div
-          className="xl:col-span-8 bg-card rounded-xl border border-border p-5 shadow-card hover:shadow-lg transition-shadow duration-300"
-          variants={scaleIn}
-          initial="initial"
-          animate="animate"
-          transition={{ delay: 0.35 }}
+        <div
+          className="xl:col-span-8 bg-card rounded-xl border border-border p-5 shadow-card hover:shadow-lg transition-shadow duration-300 animate-fade-up"
+          style={{ animationDelay: '200ms' }}
         >
           <div className="flex items-center justify-between mb-5">
             <div>
@@ -116,15 +106,12 @@ export default function Dashboard() {
               <Area type="monotone" dataKey="revenue" stroke="#E8C4A8" strokeWidth={2} fill="url(#revenueGrad)" dot={false} activeDot={{ r: 5, fill: '#E8C4A8', strokeWidth: 2, stroke: '#fff' }} animationDuration={1400} animationEasing="ease-out" />
             </AreaChart>
           </ResponsiveContainer>
-        </motion.div>
+        </div>
 
         {/* Donut */}
-        <motion.div
-          className="xl:col-span-4 bg-card rounded-xl border border-border p-5 shadow-card hover:shadow-lg transition-shadow duration-300"
-          variants={scaleIn}
-          initial="initial"
-          animate="animate"
-          transition={{ delay: 0.45 }}
+        <div
+          className="xl:col-span-4 bg-card rounded-xl border border-border p-5 shadow-card hover:shadow-lg transition-shadow duration-300 animate-fade-up"
+          style={{ animationDelay: '260ms' }}
         >
           <div className="mb-4">
             <h2 className="font-bold text-[16px] text-text-primary tracking-tight">Top Categories</h2>
@@ -152,15 +139,13 @@ export default function Dashboard() {
               <RechartTooltip formatter={(val) => [`${val}%`, '']} contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8DDD5', backgroundColor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)' }} />
             </PieChart>
           </ResponsiveContainer>
-        </motion.div>
+        </div>
       </div>
 
       {/* Recent Orders */}
-      <motion.div
-        className="bg-card rounded-xl border border-border shadow-card overflow-hidden"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.55, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+      <div
+        className="bg-card rounded-xl border border-border shadow-card overflow-hidden animate-fade-up"
+        style={{ animationDelay: '300ms' }}
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div>
@@ -188,14 +173,8 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {recentOrders.map((order, i) => (
-                <motion.tr
-                  key={order.id}
-                  className="hover:bg-muted/20 transition-colors"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 + i * 0.05, duration: 0.3 }}
-                >
+              {recentOrders.map(order => (
+                <tr key={order.id} className="hover:bg-muted/20 transition-colors">
                   <td className="px-6 py-3.5">
                     <span className="font-mono-data text-[12px] font-semibold text-primary bg-secondary px-2 py-0.5 rounded-md">{order.id}</span>
                   </td>
@@ -219,12 +198,12 @@ export default function Dashboard() {
                       <Eye className="h-3.5 w-3.5" />
                     </Button>
                   </td>
-                </motion.tr>
+                </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }

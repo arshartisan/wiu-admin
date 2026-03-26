@@ -33,18 +33,13 @@ export default function StatsCard({ label, value, icon: Icon, trend, trendDirect
           {Icon && <Icon className={cn('h-5 w-5', c.icon)} />}
         </motion.div>
         {trend && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.3 }}
-            className={cn(
-              'flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full',
-              trendDirection === 'up' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
-            )}
-          >
+          <div className={cn(
+            'flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full',
+            trendDirection === 'up' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'
+          )}>
             {trendDirection === 'up' ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
             {trend}
-          </motion.div>
+          </div>
         )}
       </div>
       <p className="text-[26px] font-bold text-text-primary tracking-tight leading-none mb-1">
