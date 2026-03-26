@@ -1,10 +1,12 @@
 import React from 'react'
+import { motion } from 'framer-motion'
 import { ShoppingBag, DollarSign, Users, Truck, Eye, ArrowUpRight } from 'lucide-react'
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartTooltip,
   ResponsiveContainer, PieChart, Pie, Cell, Legend
 } from 'recharts'
 import StatsCard from '@/components/shared/StatsCard'
+import { staggerContainer, staggerItem, scaleIn } from '@/components/shared/PageTransition'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ordersData, ordersChartData, categoryChartData } from '@/data/mockData'
@@ -17,7 +19,7 @@ const orderStatusVariants = {
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-card border border-border rounded-xl p-3 shadow-card text-sm min-w-[140px]">
+    <div className="bg-card/95 backdrop-blur-sm border border-border rounded-xl p-3 shadow-lg text-sm min-w-[140px]">
       <p className="font-semibold text-text-primary mb-2 font-sans">{label}</p>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center justify-between gap-4">
@@ -46,19 +48,38 @@ export default function Dashboard() {
   const recentOrders = ordersData.slice(0, 6)
 
   return (
-    <div className="space-y-6 animate-fade-up">
+    <div className="space-y-6">
       {/* Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        <StatsCard label="Total Orders" value="1,284" icon={ShoppingBag} trend="+12%" trendDirection="up" />
-        <StatsCard label="Revenue" value="$48,350" icon={DollarSign} trend="+8.4%" trendDirection="up" />
-        <StatsCard label="Active Users" value="3,920" icon={Users} trend="+5.1%" trendDirection="up" />
-        <StatsCard label="Pending Deliveries" value="67" icon={Truck} trend="-3 today" trendDirection="down" />
-      </div>
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4"
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.div variants={staggerItem}>
+          <StatsCard label="Total Orders" value="1,284" icon={ShoppingBag} trend="+12%" trendDirection="up" />
+        </motion.div>
+        <motion.div variants={staggerItem}>
+          <StatsCard label="Revenue" value="$48,350" icon={DollarSign} trend="+8.4%" trendDirection="up" />
+        </motion.div>
+        <motion.div variants={staggerItem}>
+          <StatsCard label="Active Users" value="3,920" icon={Users} trend="+5.1%" trendDirection="up" />
+        </motion.div>
+        <motion.div variants={staggerItem}>
+          <StatsCard label="Pending Deliveries" value="67" icon={Truck} trend="-3 today" trendDirection="down" />
+        </motion.div>
+      </motion.div>
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
         {/* Area Chart */}
-        <div className="xl:col-span-8 bg-card rounded-xl border border-border p-5 shadow-card">
+        <motion.div
+          className="xl:col-span-8 bg-card rounded-xl border border-border p-5 shadow-card hover:shadow-lg transition-shadow duration-300"
+          variants={scaleIn}
+          initial="initial"
+          animate="animate"
+          transition={{ delay: 0.35 }}
+        >
           <div className="flex items-center justify-between mb-5">
             <div>
               <h2 className="font-bold text-[16px] text-text-primary tracking-tight">Orders Overview</h2>
@@ -88,17 +109,23 @@ export default function Dashboard() {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#E8DDD5" vertical={false} />
-              <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#9C8578', fontFamily: 'Bricolage Grotesque' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: '#9C8578', fontFamily: 'Bricolage Grotesque' }} axisLine={false} tickLine={false} />
+              <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#9C8578' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: '#9C8578' }} axisLine={false} tickLine={false} />
               <RechartTooltip content={<CustomTooltip />} />
-              <Area type="monotone" dataKey="orders" stroke="#C1724F" strokeWidth={2.5} fill="url(#ordersGrad)" dot={false} activeDot={{ r: 4, fill: '#C1724F', strokeWidth: 0 }} />
-              <Area type="monotone" dataKey="revenue" stroke="#E8C4A8" strokeWidth={2} fill="url(#revenueGrad)" dot={false} activeDot={{ r: 4, fill: '#E8C4A8', strokeWidth: 0 }} />
+              <Area type="monotone" dataKey="orders" stroke="#C1724F" strokeWidth={2.5} fill="url(#ordersGrad)" dot={false} activeDot={{ r: 5, fill: '#C1724F', strokeWidth: 2, stroke: '#fff' }} animationDuration={1200} animationEasing="ease-out" />
+              <Area type="monotone" dataKey="revenue" stroke="#E8C4A8" strokeWidth={2} fill="url(#revenueGrad)" dot={false} activeDot={{ r: 5, fill: '#E8C4A8', strokeWidth: 2, stroke: '#fff' }} animationDuration={1400} animationEasing="ease-out" />
             </AreaChart>
           </ResponsiveContainer>
-        </div>
+        </motion.div>
 
         {/* Donut */}
-        <div className="xl:col-span-4 bg-card rounded-xl border border-border p-5 shadow-card">
+        <motion.div
+          className="xl:col-span-4 bg-card rounded-xl border border-border p-5 shadow-card hover:shadow-lg transition-shadow duration-300"
+          variants={scaleIn}
+          initial="initial"
+          animate="animate"
+          transition={{ delay: 0.45 }}
+        >
           <div className="mb-4">
             <h2 className="font-bold text-[16px] text-text-primary tracking-tight">Top Categories</h2>
             <p className="text-[11px] text-muted-foreground mt-0.5">By order volume this month</p>
@@ -114,27 +141,37 @@ export default function Dashboard() {
                 paddingAngle={4}
                 dataKey="value"
                 strokeWidth={0}
+                animationDuration={1000}
+                animationEasing="ease-out"
               >
                 {categoryChartData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.fill} />
                 ))}
               </Pie>
               <Legend content={<CustomLegend />} />
-              <RechartTooltip formatter={(val) => [`${val}%`, '']} contentStyle={{ fontFamily: 'Bricolage Grotesque', fontSize: 12, borderRadius: 10, border: '1px solid #E8DDD5', backgroundColor: '#FFFFFF' }} />
+              <RechartTooltip formatter={(val) => [`${val}%`, '']} contentStyle={{ fontSize: 12, borderRadius: 10, border: '1px solid #E8DDD5', backgroundColor: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)' }} />
             </PieChart>
           </ResponsiveContainer>
-        </div>
+        </motion.div>
       </div>
 
       {/* Recent Orders */}
-      <div className="bg-card rounded-xl border border-border shadow-card overflow-hidden">
+      <motion.div
+        className="bg-card rounded-xl border border-border shadow-card overflow-hidden"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.55, duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div>
             <h2 className="font-bold text-[16px] text-text-primary tracking-tight">Recent Orders</h2>
             <p className="text-[11px] text-muted-foreground mt-0.5">{recentOrders.length} latest orders</p>
           </div>
-          <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" asChild>
-            <a href="/orders">View All <ArrowUpRight className="h-3 w-3" /></a>
+          <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8 group" asChild>
+            <a href="/orders">
+              View All
+              <ArrowUpRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
           </Button>
         </div>
         <div className="overflow-x-auto">
@@ -151,8 +188,14 @@ export default function Dashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {recentOrders.map(order => (
-                <tr key={order.id} className="hover:bg-muted/20 transition-colors">
+              {recentOrders.map((order, i) => (
+                <motion.tr
+                  key={order.id}
+                  className="hover:bg-muted/20 transition-colors"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6 + i * 0.05, duration: 0.3 }}
+                >
                   <td className="px-6 py-3.5">
                     <span className="font-mono-data text-[12px] font-semibold text-primary bg-secondary px-2 py-0.5 rounded-md">{order.id}</span>
                   </td>
@@ -172,16 +215,16 @@ export default function Dashboard() {
                     <span className="text-[12px] text-muted-foreground">{formatDate(order.date)}</span>
                   </td>
                   <td className="px-6 py-3.5 text-right">
-                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
-                      <Eye className="h-3.5 w-3.5 text-muted-foreground" />
+                    <Button variant="ghost" size="sm" className="h-7 w-7 p-0 hover:bg-primary/10 hover:text-primary transition-colors">
+                      <Eye className="h-3.5 w-3.5" />
                     </Button>
                   </td>
-                </tr>
+                </motion.tr>
               ))}
             </tbody>
           </table>
         </div>
-      </div>
+      </motion.div>
     </div>
   )
 }
