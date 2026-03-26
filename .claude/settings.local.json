@@ -6,7 +6,9 @@
       "Bash(cd \"F:/Projects/WrapItUp/v2/Prompt-Analysis-Build-Start-codebase\" && rm tailwind.config.js)",
       "Bash(cd \"F:/Projects/WrapItUp/v2/Prompt-Analysis-Build-Start-codebase\" && node -e \"console.log\\(require\\('./node_modules/tailwindcss/package.json'\\).version\\)\" && node -e \"console.log\\(require\\('./node_modules/@tailwindcss/postcss/package.json'\\).version\\)\")",
       "Bash(cd \"F:/Projects/WrapItUp/v2/Prompt-Analysis-Build-Start-codebase\" && npm run build 2>&1)",
-      "Bash(cd \"F:/Projects/WrapItUp/v2/Prompt-Analysis-Build-Start-codebase\" && timeout 10 npm run dev 2>&1 || true)"
+      "Bash(cd \"F:/Projects/WrapItUp/v2/Prompt-Analysis-Build-Start-codebase\" && timeout 10 npm run dev 2>&1 || true)",
+      "Bash(npm install:*)",
+      "Bash(timeout 8 npm run dev)"
     ]
   }
 }
