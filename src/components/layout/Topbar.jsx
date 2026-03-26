@@ -1,5 +1,6 @@
 import React from 'react'
 import { useLocation } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { Bell, Search, Settings, User, LogOut, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -38,15 +39,31 @@ export default function Topbar() {
   return (
     <header className="h-16 bg-card border-b border-border flex items-center px-6 gap-4 flex-shrink-0">
       <div className="flex-1 min-w-0">
-        <h1 className="font-bold text-[18px] text-text-primary leading-tight tracking-tight">{meta.title}</h1>
-        <p className="text-[11px] text-muted-foreground font-sans hidden sm:block">{meta.subtitle}</p>
+        <motion.h1
+          key={meta.title}
+          className="font-bold text-[18px] text-text-primary leading-tight tracking-tight"
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          {meta.title}
+        </motion.h1>
+        <motion.p
+          key={meta.subtitle}
+          className="text-[11px] text-muted-foreground font-sans hidden sm:block"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+        >
+          {meta.subtitle}
+        </motion.p>
       </div>
 
       <div className="relative hidden md:flex items-center w-64">
         <Search className="absolute left-3 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
         <Input
           placeholder="Search anything..."
-          className="pl-9 h-8 text-sm bg-muted/40 border-transparent focus-visible:bg-card focus-visible:border-border"
+          className="pl-9 h-8 text-sm bg-muted/40 border-transparent focus-visible:bg-card focus-visible:border-border transition-all duration-200"
         />
       </div>
 
@@ -55,9 +72,14 @@ export default function Topbar() {
           <Button variant="ghost" size="icon" className="relative h-8 w-8">
             <Bell className="h-4 w-4 text-muted-foreground" />
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 h-3.5 w-3.5 bg-primary text-white text-[8px] font-bold rounded-full flex items-center justify-center leading-none">
+              <motion.span
+                className="absolute top-1 right-1 h-3.5 w-3.5 bg-primary text-white text-[8px] font-bold rounded-full flex items-center justify-center leading-none"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.5 }}
+              >
                 {unreadCount}
-              </span>
+              </motion.span>
             )}
           </Button>
         </DropdownMenuTrigger>
