@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
-import { Plus, Eye, Edit, XCircle, Filter, Download } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Plus, Eye, Edit, XCircle, Download } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import DataTable from '@/components/shared/DataTable'
-import FormField from '@/components/shared/FormField'
 import DeleteDialog from '@/components/shared/DeleteDialog'
 import { ordersData } from '@/data/mockData'
 import { formatDate } from '@/lib/utils'
@@ -29,42 +28,21 @@ const columns = [
   { key: 'deliveryDate', label: 'Delivery Date' },
 ]
 
-const createOrderFields = [
-  { name: 'customer_id', label: 'Customer', type: 'combobox', required: true },
-  { name: 'gift_items', label: 'Gift Items', type: 'input', required: true },
-  { name: 'gift_accessories', label: 'Gift Accessories', type: 'multi_select', options: ['Gift Box', 'Ribbon', 'Greeting Card', 'Wrapping Paper'] },
-  { name: 'delivery_address', label: 'Delivery Address', type: 'textarea' },
-  { name: 'delivery_date', label: 'Delivery Date', type: 'date_picker' },
-  { name: 'special_message', label: 'Gift Message', type: 'textarea', max_length: 200 },
-  { name: 'payment_method', label: 'Payment Method', type: 'select', options: ['Credit Card', 'Debit Card', 'Cash on Delivery', 'Bank Transfer'] },
-  { name: 'promo_code', label: 'Promo Code', type: 'input_with_apply_button' },
-  { name: 'order_notes', label: 'Internal Notes', type: 'textarea' },
-]
-
 export default function Orders() {
+  const navigate = useNavigate()
   const [data, setData] = useState(ordersData)
   const [statusFilter, setStatusFilter] = useState('All')
   const [paymentFilter, setPaymentFilter] = useState('All')
-  const [createOpen, setCreateOpen] = useState(false)
   const [detailOpen, setDetailOpen] = useState(false)
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState(null)
-  const [formData, setFormData] = useState({})
 
   const filtered = data.filter(o => {
     if (statusFilter !== 'All' && o.status !== statusFilter) return false
     if (paymentFilter !== 'All' && o.payment !== paymentFilter) return false
     return true
   })
-
-  const handleFormChange = (name, value) => setFormData(f => ({ ...f, [name]: value }))
-
-  const handleCreate = () => {
-    toast.success('Order created successfully!')
-    setCreateOpen(false)
-    setFormData({})
-  }
 
   const handleDelete = () => {
     setData(d => d.filter(o => o.id !== deleteTarget?.id))
@@ -89,7 +67,8 @@ export default function Orders() {
         onClick={() => { setSelectedOrder(row); setDetailOpen(true) }}>
         <Eye className="h-3.5 w-3.5" /> View
       </Button>
-      <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1">
+      <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1"
+        onClick={() => navigate(`/orders/${row.id}/edit`)}>
         <Edit className="h-3.5 w-3.5" /> Edit
       </Button>
       <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1 text-destructive hover:text-destructive"
@@ -124,7 +103,7 @@ export default function Orders() {
       <Button variant="outline" size="sm" className="gap-2" onClick={() => toast.info('Export started')}>
         <Download className="h-4 w-4" /> Export
       </Button>
-      <Button size="sm" className="gap-2" onClick={() => setCreateOpen(true)}>
+      <Button size="sm" className="gap-2" onClick={() => navigate('/orders/create')}>
         <Plus className="h-4 w-4" /> Create Order
       </Button>
     </>
@@ -142,26 +121,6 @@ export default function Orders() {
         toolbar={toolbar}
         emptyMessage="No orders found. Create your first order to get started."
       />
-
-      {/* Create Order Dialog */}
-      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Create New Order</DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
-            {createOrderFields.map(field => (
-              <div key={field.name} className={field.type === 'textarea' || field.type === 'rich_textarea' ? 'sm:col-span-2' : ''}>
-                <FormField field={field} value={formData[field.name]} onChange={handleFormChange} />
-              </div>
-            ))}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button onClick={handleCreate}>Create Order</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Order Detail Sheet */}
       <Sheet open={detailOpen} onOpenChange={setDetailOpen}>

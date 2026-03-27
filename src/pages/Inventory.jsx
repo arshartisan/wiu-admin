@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Plus, Edit, Trash2, RefreshCw, Package, AlertTriangle, XCircle, DollarSign } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -21,18 +22,6 @@ const columns = [
   { key: 'lastRestocked', label: 'Last Restocked' },
 ]
 
-const accessoryFields = [
-  { name: 'name', label: 'Accessory Name', type: 'input', required: true },
-  { name: 'type', label: 'Type', type: 'select', required: true, options: ['Gift Box', 'Ribbon', 'Wrapping Paper', 'Greeting Card', 'Tissue Paper', 'Filler', 'Sticker', 'Other'] },
-  { name: 'sku', label: 'SKU', type: 'input' },
-  { name: 'unit_cost', label: 'Unit Cost ($)', type: 'number_input' },
-  { name: 'quantity_in_stock', label: 'Current Stock', type: 'number_input', required: true },
-  { name: 'reorder_level', label: 'Reorder Alert Level', type: 'number_input' },
-  { name: 'supplier_name', label: 'Supplier Name', type: 'input' },
-  { name: 'supplier_contact', label: 'Supplier Contact', type: 'input' },
-  { name: 'notes', label: 'Notes', type: 'textarea' },
-]
-
 const restockFields = [
   { name: 'quantity_to_add', label: 'Quantity to Add', type: 'number_input', required: true },
   { name: 'unit_cost', label: 'Unit Cost ($)', type: 'number_input' },
@@ -46,8 +35,8 @@ const typeVariants = {
 }
 
 export default function Inventory() {
+  const navigate = useNavigate()
   const [data, setData] = useState(inventoryData)
-  const [addOpen, setAddOpen] = useState(false)
   const [restockOpen, setRestockOpen] = useState(false)
   const [editTarget, setEditTarget] = useState(null)
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -59,13 +48,6 @@ export default function Inventory() {
   const totalValue = data.reduce((sum, i) => sum + i.inStock * i.unitCost, 0)
 
   const handleFormChange = (name, value) => setFormData(f => ({ ...f, [name]: value }))
-
-  const handleSave = () => {
-    toast.success(editTarget ? 'Accessory updated!' : 'Accessory added!')
-    setAddOpen(false)
-    setFormData({})
-    setEditTarget(null)
-  }
 
   const handleRestock = () => {
     if (editTarget && formData.quantity_to_add) {
@@ -90,7 +72,7 @@ export default function Inventory() {
       const low = row.inStock > 0 && row.inStock <= row.reorderLevel
       return (
         <span className={out ? 'text-destructive font-semibold' : low ? 'text-warning font-semibold' : 'text-text-primary font-medium'}>
-          {row.inStock} {out ? '❌' : low ? '⚠️' : ''}
+          {row.inStock}
         </span>
       )
     }
@@ -102,7 +84,7 @@ export default function Inventory() {
   const renderActions = (row) => (
     <div className="flex items-center justify-end gap-1">
       <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1"
-        onClick={() => { setEditTarget(row); setFormData({}); setAddOpen(true) }}>
+        onClick={() => navigate(`/inventory/${row.id}/edit`)}>
         <Edit className="h-3.5 w-3.5" /> Edit
       </Button>
       <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1 text-success hover:text-success"
@@ -117,7 +99,7 @@ export default function Inventory() {
   )
 
   const toolbar = (
-    <Button size="sm" className="gap-2" onClick={() => { setEditTarget(null); setFormData({}); setAddOpen(true) }}>
+    <Button size="sm" className="gap-2" onClick={() => navigate('/inventory/create')}>
       <Plus className="h-4 w-4" /> Add Accessory
     </Button>
   )
@@ -143,27 +125,7 @@ export default function Inventory() {
         emptyMessage="No accessories in inventory."
       />
 
-      {/* Add/Edit Dialog */}
-      <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent className="max-w-xl">
-          <DialogHeader>
-            <DialogTitle>{editTarget ? 'Edit Accessory' : 'Add Accessory Item'}</DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
-            {accessoryFields.map(field => (
-              <div key={field.name} className={field.type === 'textarea' ? 'sm:col-span-2' : ''}>
-                <FormField field={field} value={formData[field.name]} onChange={handleFormChange} />
-              </div>
-            ))}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave}>{editTarget ? 'Save Changes' : 'Add Accessory'}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Restock Dialog */}
+      {/* Restock Dialog (kept as dialog — quick action) */}
       <Dialog open={restockOpen} onOpenChange={setRestockOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>

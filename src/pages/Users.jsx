@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Plus, Eye, Edit, UserX, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -6,9 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
 import DataTable from '@/components/shared/DataTable'
-import FormField from '@/components/shared/FormField'
 import DeleteDialog from '@/components/shared/DeleteDialog'
 import { usersData } from '@/data/mockData'
 import { formatDate } from '@/lib/utils'
@@ -23,30 +22,15 @@ const columns = [
   { key: 'joined', label: 'Joined', sortable: true },
 ]
 
-const userFields = [
-  { name: 'first_name', label: 'First Name', type: 'input', required: true },
-  { name: 'last_name', label: 'Last Name', type: 'input', required: true },
-  { name: 'email', label: 'Email Address', type: 'email_input', required: true },
-  { name: 'phone', label: 'Phone Number', type: 'phone_input' },
-  { name: 'role', label: 'Role', type: 'select', options: ['Customer', 'Admin', 'Manager'], required: true },
-  { name: 'address', label: 'Address', type: 'textarea' },
-  { name: 'password', label: 'Temporary Password', type: 'password_input' },
-  { name: 'send_invite', label: 'Send Welcome Email', type: 'switch', default: true },
-  { name: 'is_active', label: 'Active', type: 'switch', default: true },
-]
-
 const roleVariants = { Customer: 'blue', Admin: 'purple', Manager: 'orange' }
 
 export default function Users() {
+  const navigate = useNavigate()
   const [data, setData] = useState(usersData)
   const [roleFilter, setRoleFilter] = useState('All')
   const [statusFilter, setStatusFilter] = useState('All')
-  const [addOpen, setAddOpen] = useState(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState(null)
-  const [formData, setFormData] = useState({})
-
-  const handleFormChange = (name, value) => setFormData(f => ({ ...f, [name]: value }))
 
   const filterData = (tab) => {
     let filtered = data
@@ -86,7 +70,7 @@ export default function Users() {
       <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1" onClick={() => toast.info(`View ${row.name}`)}>
         <Eye className="h-3.5 w-3.5" /> View
       </Button>
-      <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1" onClick={() => toast.info('Edit user')}>
+      <Button variant="ghost" size="sm" className="h-7 px-2 text-xs gap-1" onClick={() => navigate(`/users/${row.id}/edit`)}>
         <Edit className="h-3.5 w-3.5" />
       </Button>
       <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-warning hover:text-warning" onClick={() => toast.warning(`${row.name} suspended`)}>
@@ -113,7 +97,7 @@ export default function Users() {
           {['All', 'Active', 'Suspended'].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
         </SelectContent>
       </Select>
-      <Button size="sm" className="gap-2" onClick={() => { setFormData({ send_invite: true, is_active: true }); setAddOpen(true) }}>
+      <Button size="sm" className="gap-2" onClick={() => navigate('/users/create')}>
         <Plus className="h-4 w-4" /> Add User
       </Button>
     </>
@@ -143,25 +127,6 @@ export default function Users() {
         <TabsContent value="customers"><TableContent tab="customers" /></TabsContent>
         <TabsContent value="admins"><TableContent tab="admins" /></TabsContent>
       </Tabs>
-
-      <Dialog open={addOpen} onOpenChange={setAddOpen}>
-        <DialogContent className="max-w-xl">
-          <DialogHeader>
-            <DialogTitle>Add New User</DialogTitle>
-          </DialogHeader>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
-            {userFields.map(field => (
-              <div key={field.name} className={field.type === 'textarea' ? 'sm:col-span-2' : ''}>
-                <FormField field={field} value={formData[field.name]} onChange={handleFormChange} />
-              </div>
-            ))}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setAddOpen(false)}>Cancel</Button>
-            <Button onClick={() => { toast.success('User added!'); setAddOpen(false) }}>Add User</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       <DeleteDialog open={deleteOpen} onOpenChange={setDeleteOpen} itemName={deleteTarget?.name} onConfirm={handleDelete} />
     </div>

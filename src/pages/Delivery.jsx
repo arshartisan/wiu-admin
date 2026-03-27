@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Plus, Eye, UserPlus, Edit, Printer, Clock, Truck, CheckCircle, XCircle } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Plus, Eye, UserPlus, Printer, Clock, Truck, CheckCircle, XCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -28,21 +29,13 @@ const assignFields = [
   { name: 'notes', label: 'Delivery Notes', type: 'textarea' },
 ]
 
-const zoneFields = [
-  { name: 'zone_name', label: 'Zone Name', type: 'input', required: true },
-  { name: 'covered_areas', label: 'Covered Areas / Zip Codes', type: 'tag_input' },
-  { name: 'delivery_fee', label: 'Delivery Fee ($)', type: 'number_input' },
-  { name: 'estimated_days', label: 'Estimated Delivery Days', type: 'number_input' },
-  { name: 'is_active', label: 'Active', type: 'switch', default: true },
-]
-
 const statusVariants = {
   Delivered: 'green', 'In Transit': 'blue', Pending: 'yellow', Failed: 'red'
 }
 
 export default function Delivery() {
+  const navigate = useNavigate()
   const [assignOpen, setAssignOpen] = useState(false)
-  const [zoneOpen, setZoneOpen] = useState(false)
   const [selectedRow, setSelectedRow] = useState(null)
   const [formData, setFormData] = useState({})
 
@@ -84,7 +77,7 @@ export default function Delivery() {
   )
 
   const toolbar = (
-    <Button size="sm" variant="outline" className="gap-2" onClick={() => { setFormData({ is_active: true }); setZoneOpen(true) }}>
+    <Button size="sm" variant="outline" className="gap-2" onClick={() => navigate('/delivery/zones/create')}>
       <Plus className="h-4 w-4" /> Add Delivery Zone
     </Button>
   )
@@ -126,7 +119,7 @@ export default function Delivery() {
         <TabsContent value="failed"><DeliveryTable tab="failed" /></TabsContent>
       </Tabs>
 
-      {/* Assign Agent Dialog */}
+      {/* Assign Agent Dialog (kept as dialog — quick action) */}
       <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -140,24 +133,6 @@ export default function Delivery() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setAssignOpen(false)}>Cancel</Button>
             <Button onClick={() => { toast.success('Agent assigned!'); setAssignOpen(false) }}>Assign Agent</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Zone Dialog */}
-      <Dialog open={zoneOpen} onOpenChange={setZoneOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Add Delivery Zone</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            {zoneFields.map(field => (
-              <FormField key={field.name} field={field} value={formData[field.name]} onChange={handleFormChange} />
-            ))}
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setZoneOpen(false)}>Cancel</Button>
-            <Button onClick={() => { toast.success('Delivery zone added!'); setZoneOpen(false) }}>Add Zone</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
