@@ -209,7 +209,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
         </div>
 
         {/* User */}
-        <div className={cn('p-2.5 border-t border-border', isCollapsed && 'px-2')}>
+        {/* <div className={cn('p-2.5 border-t border-border', isCollapsed && 'px-2')}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className={cn(
@@ -234,7 +234,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
               <DropdownMenuItem className="text-destructive"><LogOut className="h-4 w-4 mr-2" /> Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </div> */}
 
         {/* Collapse toggle — hidden on mobile */}
         <div className={cn('px-2.5 pb-3 hidden lg:block', isCollapsed && 'px-2')}>

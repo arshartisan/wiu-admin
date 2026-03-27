@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Edit, Trash2, Eye, Layers } from 'lucide-react'
+import { Plus, Edit, Trash2, Eye, Layers, Gift, Cake, Heart, Briefcase, Baby, Flower2, ShoppingBasket, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import DeleteDialog from '@/components/shared/DeleteDialog'
 import { giftCategoriesData } from '@/data/mockData'
 
-const categoryIcons = ['🎁', '🎂', '💍', '💼', '👶', '🌸', '🧺', '🧖']
+const categoryIcons = [Gift, Cake, Heart, Briefcase, Baby, Flower2, ShoppingBasket, Sparkles]
 
 export default function GiftCategories() {
   const navigate = useNavigate()
@@ -45,9 +45,14 @@ export default function GiftCategories() {
             <Card key={cat.id} className="hover:shadow-card transition-shadow group">
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-3">
-                  <div className="h-12 w-12 rounded-xl bg-secondary flex items-center justify-center text-2xl">
-                    {categoryIcons[i % categoryIcons.length]}
-                  </div>
+                  {(() => {
+                    const Icon = categoryIcons[i % categoryIcons.length]
+                    return (
+                      <div className="h-12 w-12 rounded-xl bg-secondary flex items-center justify-center">
+                        <Icon className="h-6 w-6 text-primary" />
+                      </div>
+                    )
+                  })()}
                   <Badge variant={cat.status === 'Active' ? 'green' : 'gray'}>{cat.status}</Badge>
                 </div>
                 <h3 className="font-semibold text-text-primary mb-0.5">{cat.name}</h3>

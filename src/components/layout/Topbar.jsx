@@ -1,5 +1,5 @@
 import React from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Bell, Search, Settings, User, LogOut, ChevronDown, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel
+  DropdownMenuSeparator, DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import { useAuth } from '@/context/AuthContext'
 
 const routeMeta = {
   '/dashboard':    { title: 'Dashboard',             subtitle: 'Welcome back, Admin — WrapItUp' },
@@ -22,6 +23,7 @@ const routeMeta = {
   '/users':        { title: 'Users',                 subtitle: 'Customers and staff accounts' },
   '/delivery':     { title: 'Delivery Management',   subtitle: 'Track and dispatch orders' },
   '/settings':     { title: 'Settings',              subtitle: 'Configure your store' },
+  '/profile':      { title: 'Profile',               subtitle: 'Manage your account' },
 }
 
 const notifications = [
@@ -33,8 +35,15 @@ const notifications = [
 
 export default function Topbar({ onMobileMenuToggle }) {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { user, logout } = useAuth()
   const meta = routeMeta[location.pathname] || routeMeta['/dashboard']
   const unreadCount = notifications.filter(n => n.unread).length
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login', { replace: true })
+  }
 
   return (
     <header className="h-16 bg-card border-b border-border flex items-center px-4 sm:px-6 gap-3 sm:gap-4 flex-shrink-0">
@@ -121,20 +130,28 @@ export default function Topbar({ onMobileMenuToggle }) {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="flex items-center gap-2 h-8 px-2">
             <Avatar className="h-7 w-7">
-              <AvatarFallback className="text-[11px] font-bold bg-primary text-white">AU</AvatarFallback>
+              <AvatarFallback className="text-[11px] font-bold bg-primary text-white">
+                {user?.initials || 'AU'}
+              </AvatarFallback>
             </Avatar>
             <div className="hidden md:block text-left">
-              <p className="text-[12px] font-semibold text-text-primary leading-none">Admin User</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">Administrator</p>
+              <p className="text-[12px] font-semibold text-text-primary leading-none">{user?.name || 'Admin User'}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{user?.role || 'Administrator'}</p>
             </div>
             <ChevronDown className="h-3 w-3 text-muted-foreground hidden md:block" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuItem><User className="h-4 w-4 mr-2" /> Profile</DropdownMenuItem>
-          <DropdownMenuItem><Settings className="h-4 w-4 mr-2" /> Settings</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate('/profile')}>
+            <User className="h-4 w-4 mr-2" /> Profile
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => navigate('/settings')}>
+            <Settings className="h-4 w-4 mr-2" /> Settings
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-destructive"><LogOut className="h-4 w-4 mr-2" /> Logout</DropdownMenuItem>
+          <DropdownMenuItem className="text-destructive" onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-2" /> Logout
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
